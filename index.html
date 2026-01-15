@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<title>คำนวณราคาและกำไร</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    font-family: "Noto Sans Thai", system-ui, -apple-system,
+                 BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f4f6f8;
+    padding: 40px;
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card {
+    background: #fff;
+    width: 420px;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.price {
+    font-size: 14px;
+    color: #777;
+}
+
+input[type="number"] {
+    width: 60px;
+    padding: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.total {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.profit {
+    color: #2e7d32;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= CARD 1 ================= -->
+<div class="card">
+<h1>คำนวณราคาของ</h1>
+
+<div class="item"><span>ชีสสติก</span><span class="price">94</span><input type="number" id="s1" value="0"></div>
+<div class="item"><span>คอนชีส</span><span class="price">57</span><input type="number" id="s3" value="0"></div>
+<div class="item"><span>โดนัทกุ้ง</span><span class="price">73</span><input type="number" id="s4" value="0"></div>
+<div class="item"><span>นักเก็ต</span><span class="price">100</span><input type="number" id="s5" value="0"></div>
+<div class="item"><span>เฟรนฟราย</span><span class="price">54</span><input type="number" id="s6" value="0"></div>
+
+<div class="total" id="costTotal">ราคารวม: 0 บาท</div>
+</div>
+
+<!-- ================= CARD 2 ================= -->
+<div class="card">
+<h1>คำนวณกำไร</h1>
+
+<div class="item"><span>ชีสสติก</span><span class="price">15 / 6.27</span><input type="number" id="p1" value="0"></div>
+<div class="item"><span>คอนชีส</span><span class="price">8 / 7.2</span><input type="number" id="p3" value="0"></div>
+<div class="item"><span>โดนัทกุ้ง</span><span class="price">12 / 6.1</span><input type="number" id="p4" value="0"></div>
+<div class="item"><span>นักเก็ต</span><span class="price">14 / 49</span><input type="number" id="p5" value="0"></div>
+<div class="item"><span>เฟรนฟราย</span><span class="price">10 / 49</span><input type="number" id="p6" value="0"></div>
+
+<div class="total sale" id="saleTotal">ยอดขายรวม: 0 บาท</div>
+<div class="total profit" id="profitTotal">กำไรรวม: 0 บาท</div>
+</div>
+
+<script>
+// ---------------- CARD 1 ----------------
+const salePrices = [94, 57, 73, 100, 54];
+
+// ---------------- CARD 2 ----------------
+const profitData = [
+    { sell: 15, cost: 6.27 },
+    { sell: 8, cost: 7.2 },
+    { sell: 12, cost: 6.1 },
+    { sell: 49, cost: 14 },
+    { sell: 49, cost: 10 }
+];
+
+// ลบเลข 0 นำหน้า
+function cleanZero(input) {
+    if (input.value === "" || input.value === "0") {
+        input.value = "0";
+    } else {
+        input.value = parseInt(input.value, 10);
+    }
+}
+
+// คำนวณยอดขาย
+function calculateSale() {
+    let total = 0;
+    salePrices.forEach((price, i) => {
+        total += (Number(document.getElementById(`s${i+1}`).value) || 0) * price;
+    });
+    document.getElementById("costTotal").innerText =
+        `ราคารวม: ${total.toLocaleString()} บาท`;
+}
+
+// คำนวณกำไร
+function calculateProfit() {
+    let total = 0;
+    let saleTotal = 0;
+    profitData.forEach((item, i) => {
+        const qty = Number(document.getElementById(`p${i+1}`).value) || 0;
+        total += (qty * item.sell) - (qty * item.cost);
+        saleTotal += qty * item.sell;
+    });
+    document.getElementById("saleTotal").innerText =
+        `ยอดขายรวม: ${saleTotal.toFixed(2)} บาท`;
+    document.getElementById("profitTotal").innerText =
+        `กำไรรวม: ${total.toFixed(2)} บาท`;
+}
+
+// event
+document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener("input", function () {
+        cleanZero(this);
+        calculateSale();
+        calculateProfit();
+    });
+});
+</script>
+
+</body>
+</html>
